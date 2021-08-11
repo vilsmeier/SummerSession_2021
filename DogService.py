@@ -6,7 +6,7 @@ from pandas import DataFrame as df
 from matplotlib import pyplot as plt
 import psycopg2
 
-# streamlit run /Users/apple/Documents/GitHub/SummerSession_2021/st_db_demo.py
+# streamlit run /Users/apple/Documents/GitHub/SummerSession_2021/DogService.py
 
 # Initialize connection.
 # Uses st.cache to only run once.
@@ -24,9 +24,10 @@ def run_query(query):
         cur.execute(query)
         return cur.fetchall()
 
-def run_insert(insert):
+def execute_sql(insert):
     with conn.cursor() as cur:
         cur.execute(insert)
+        conn.commit()
 
 
 def get_all_dogs():
@@ -67,13 +68,20 @@ def resign_dogs(name,birthday,male,species):
         insert into dogs (name, resign, birthday, male, species) VALUES 
             (\'{}\',now(),\'{}\',{},\'{}\');
         '''.format(name,birthday,male,species)
-    run_insert(x)
+    execute_sql(x)
     print(x)
     print('done!')
 
+def delete_dogs(name):
+    execute_sql('''
+        delete from dogs where name=\'{}\';
+    '''.format(name))
+
+
 if __name__ == '__main__':
-    # print(get_all_dogs())
-    resign_dogs('Gougou','2020-1-4','false','Hashiqi')
+    print(get_all_dogs())
+    resign_dogs('Gammago','2017-4-9','false','Hashiqi')
+    print('execute!')
 
 
 
