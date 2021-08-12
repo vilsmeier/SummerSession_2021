@@ -80,8 +80,6 @@ def delete_dogs(name):
 def get_dog_id_by_name(name):
     return get_dogs_by_name(name)['id']
 
-
-
 def add_temperature(dog_id,temperature):
     execute_sql('''
         insert into temperature (temperature, dog_id, time) VALUES
@@ -117,6 +115,45 @@ def get_gesture(dog_id):
         'gesture':ges_list,
         'time':time_list
     })
+
+def add_weight(dog_id,weight):
+    execute_sql('''
+        insert into weight (weight, dog_id, time) VALUES
+        ({},\'{}\',now());
+    '''.format(weight,dog_id))
+
+def get_weight(dog_id):
+    q =  run_query('select weight,time from weight where dog_id={} order by time;'.format(dog_id))
+    wei_list = []
+    time_list = []
+    for e in q:
+        wei_list.append(e[0])
+        time_list.append(e[1])
+    return df({
+        'weight':wei_list,
+        'time':time_list
+    })
+
+def add_heart_rate(dog_id,heart_rate):
+    execute_sql('''
+        insert into heart_rate (heart_rate, dog_id, time) VALUES
+        ({},\'{}\',now());
+    '''.format(heart_rate,dog_id))
+
+def get_heart_rate(dog_id):
+    q =  run_query('select heart_rate,time from heart_rate where dog_id={} order by time;'.format(dog_id))
+    rat_list = []
+    time_list = []
+    for e in q:
+        rat_list.append(e[0])
+        time_list.append(e[1])
+    return df({
+        'heart_rate':rat_list,
+        'time':time_list
+    })
+
+
+
 
 
 if __name__ == '__main__':
