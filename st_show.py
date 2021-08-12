@@ -53,7 +53,7 @@ if resign_flag and commit_flag==False:
         resign_flag = False
         commit_flag = False
 
-hr = ss.get_heart_rate(1).set_index(['time'])
+hr = ss.get_heart_rate(1)#.set_index(['time'])
 st.dataframe(hr)
 st.line_chart(hr['heart_rate'])
 
