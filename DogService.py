@@ -77,6 +77,47 @@ def delete_dogs(name):
         delete from dogs where name=\'{}\';
     '''.format(name))
 
+def get_dog_id_by_name(name):
+    return get_dogs_by_name(name)['id']
+
+
+
+def add_temperature(dog_id,temperature):
+    execute_sql('''
+        insert into temperature (temperature, dog_id, time) VALUES
+        ({},\'{}\',now());
+    '''.format(temperature,dog_id))
+
+def get_temperature(dog_id):
+    q =  run_query('select temperature,time from temperature where dog_id={} order by time;'.format(dog_id))
+    temp_list = []
+    time_list = []
+    for e in q:
+        temp_list.append(e[0])
+        time_list.append(e[1])
+    return df({
+        'temperature':temp_list,
+        'time':time_list
+    })
+
+def add_gesture(dog_id,gesture):
+    execute_sql('''
+        insert into gesture (gesture, dog_id, time) VALUES
+        (\'{}\',\'{}\',now());
+    '''.format(gesture,dog_id))
+
+def get_gesture(dog_id):
+    q =  run_query('select gesture,time from gesture where dog_id={} order by time;'.format(dog_id))
+    ges_list = []
+    time_list = []
+    for e in q:
+        ges_list.append(e[0])
+        time_list.append(e[1])
+    return df({
+        'gesture':ges_list,
+        'time':time_list
+    })
+
 
 if __name__ == '__main__':
     print(get_all_dogs())
