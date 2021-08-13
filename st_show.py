@@ -8,9 +8,9 @@ import psycopg2
 
 import DogService as ss
 
-'''
-streamlit run /Users/apple/Documents/GitHub/SummerSession_2021/st_show.py
-'''
+# '''
+# streamlit run /Users/apple/Documents/GitHub/SummerSession_2021/st_show.py
+# '''
 
 
 st.dataframe(ss.get_all_dogs())
@@ -53,7 +53,15 @@ if resign_flag and commit_flag==False:
         resign_flag = False
         commit_flag = False
 
-hr = ss.get_heart_rate(1)#.set_index(['time'])
+hr = ss.get_heart_rate(2)#.set_index(['time'])
 st.dataframe(hr)
+# while True:
+
 st.line_chart(hr['heart_rate'])
+
+st.write(type(hr['time'][0]))
+
+st.line_chart(ss.get_heart_rate(2))
+
+plt.plot(hr['time'],hr['heart_rate'])
 
