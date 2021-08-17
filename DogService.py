@@ -1,10 +1,14 @@
-from logging import error
-import streamlit as st
 import datetime
+import os
+from io import BytesIO, StringIO
+from logging import error
+
 import pandas as pd
-from pandas import DataFrame as df
-from matplotlib import pyplot as plt
 import psycopg2
+import streamlit as st
+from matplotlib import pyplot as plt
+from pandas import DataFrame as df
+from PIL import Image
 
 # streamlit run /Users/apple/Documents/GitHub/SummerSession_2021/DogService.py
 
@@ -170,14 +174,35 @@ def get_respire_rate(dog_id):
         'time':time_list
     })
 
+def add_photo(dog_id,dir):
+    with open(dir,'rb') as f:
+        img_buffer = f.read()
+    binaryCoding = psycopg2.Binary(img_buffer)
+    execute_sql('''
+            insert into dog_photo(picture, dog_id, time) VALUES
+            (\'{}\',\'{}\',now());
+        ''',binaryCoding,dog_id)
+
+def get_photo(dog_id):
+    q =  run_query('select respire_rate,time from respire_rate where dog_id={} order by time;'.format(dog_id))
+    temp_list = []
+    time_list = []
+    for e in q:
+        temp_list.append(Image.open(BytesIO(e[0])))
+        time_list.append(e[1])
+    return df({
+        'respire_rate':temp_list,
+        'time':time_list
+    })
 
 
 
 
 if __name__ == '__main__':
-    print(get_all_dogs())
-    resign_dogs('Gammago','2017-4-9','false','Hashiqi')
-    print('execute!')
+    # print(get_all_dogs())
+    # resign_dogs('Gammago','2017-4-9','false','Hashiqi')
+    # print('execute!')
+    pass
 
 
 
