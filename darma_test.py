@@ -23,6 +23,8 @@ TOKEN = "8b13b8eb9bf943f7832eacb6419f0cca"
 API_getCurrentData = "https://api.darma.cn/mattress/device/physiology/actual"
 Headers = {'content-type':'application/json','accessToken':TOKEN}
 
+
+
 def query(device_id = "612108000004"):
     request_currentData = {"deviceNos":device_id}
     r = requests.post(url = API_getCurrentData, data = json.dumps(request_currentData), headers = Headers)
