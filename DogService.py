@@ -152,6 +152,24 @@ def get_heart_rate(dog_id):
         'time':time_list
     })
 
+def add_respire_rate(dog_id,respire_rate):
+    execute_sql('''
+        insert into respire_rate (respire_rate, dog_id, time) VALUES
+        ({},\'{}\',now());
+    '''.format(respire_rate,dog_id))
+
+def get_respire_rate(dog_id):
+    q =  run_query('select respire_rate,time from respire_rate where dog_id={} order by time;'.format(dog_id))
+    temp_list = []
+    time_list = []
+    for e in q:
+        temp_list.append(e[0])
+        time_list.append(e[1])
+    return df({
+        'respire_rate':temp_list,
+        'time':time_list
+    })
+
 
 
 
