@@ -28,70 +28,6 @@ switch =0 # close
 
 
 def test():
-    # if switch !=1:
-    #     return st.warning('no account')
-
-    # st.write('here is test')
-
-    # # 导入数据并显示出数据
-    # st.text("the data list:")
-    # df =pd.read_csv("position.csv")
-    # st.table(df)
-
-
-    # # 左侧栏列表
-    # name_list =df["dog_name"].unique()
-    # name_type =st.sidebar.selectbox(
-    #     "name:",
-    #     name_list
-    # )
-
-    # event_list =df["event_type"].unique()
-    # event_type =st.sidebar.selectbox(
-    #     "event:",
-    #     event_list
-    # )
-
-
-
-    # part_df =df[(df['dog_name'] ==name_type) & (df['event_type'] ==event_type)]
-    # print(part_df)
-    # st.write(f"According to your selection, there is/are {len(part_df)} raws.")
-
-    # 在图上标出点的位置，？？？如何更改样式
-    # map_raw_1
-    # st.map(part_df)
-    # def map(data, lat, lon, zoom):
-    #     st.write(pdk.Deck(
-    #         map_style="mapbox://styles/mapbox/light-v9",
-    #         initial_view_state={
-    #             "latitude": lat,
-    #             "longitude": lon,
-    #             "zoom": zoom,
-    #             "pitch": 50,
-    #         },
-    #         layers=[
-    #             pdk.Layer(
-    #                 "HexagonLayer",
-    #                 data=data,
-    #                 get_position=["lon", "lat"],
-    #                 radius=100,
-    #                 elevation_scale=4,
-    #                 elevation_range=[0, 1000],
-    #                 pickable=True,
-    #                 extruded=True,
-    #             ),
-    #         ]
-    #     ))
-    # map()
-
-    # add_selectbox =st.sidebar.selectbox(
-    #     "How do youlike to be cntacted?",
-    #     ("Email","Home phone","Mobile phone")
-    # )
-
-    # slider_val =0
-    
     with st.form("mood"):
         st.write("How is your dog today")
         mood_score =st.slider("Score for activity")
@@ -112,21 +48,6 @@ def test():
         submitted2 =st.form_submit_button("Submit")
         if submitted2:
             st.write("mood:",food_score)
-
-    # form2 =st.form("my_form2")
-    # form2.slider("Inside the form2")# 在form2里面合在一起
-    # st.slider("form2")# 独立的一个项
-    # # now add a submit button to the form
-    # form2.form_submit_button("Submit")
-
-    # ## 
-
-
-    # agree = st.checkbox('hahaha')
-    # if agree:
-    #     st.write('gagaga')
-
-    # st.write(add_selectbox)
 
     with st.form('recording'): 
         record = st.text_area('what\'s interesting today')
@@ -256,14 +177,14 @@ def data():
     # ========= raw 0: user's info ================
     ## here you have to gain the image from your user about their dogs, also with the label
     ## if no, there is a default setting
-    st.write('here is daily')
-    img_def =Image.open('neko.jpeg')
-    cap_def ='my dog'
-    st.image(img_def,cap_def)
-    them_color ='green'
+    # st.write('here is daily')
+    # img_def =Image.open('neko.jpeg')
+    # cap_def ='my dog'
+    # st.image(img_def,cap_def)
+    # them_color ='green'
 
-    st.sidebar.subheader('time scale')
-    data_timescale =st.sidebar.radio('',('today','longterm'))
+    # st.sidebar.subheader('time scale')
+    # data_timescale =st.sidebar.radio('',('today','longterm'))
     # if data_timescale =='today':
 
         # st.subheader('heart rate')
@@ -357,16 +278,67 @@ def data():
     # import plotly.figure_factory as ff
     # heart_long =pd.read_csv('heart_longterm_'+pet_name+'.csv')
 
-    def present(pic,name_list):
-        null0_1,row0_2,null0_3,row0_4,null0_5,row0_6,null0_7 =st.beta_columns((0.1,4,0.2,4,0.2,4,0.1))
-        with row0_2:
-            head_photo =st.image(pic)
+    
+
+    def present(pic,mood,heart,respiration,temp,pose,step):
+        # ====================row 0====================
+        row0_2,row0_4,row0_6 =st.beta_columns((0.01,0.02,0.01))
         with row0_4:
-            get_name =st.checkbox()
+            get_name =st.selectbox('NAME',options=ss.get_all_dogs()['name'])
+        with row0_2:
+            if len(get_name) !=0:
+                st.image(pic,use_column_width =True, caption ='my photo')
 
+        # with row0_4:
+        #     if len(get_name) ==0:
+        #         st.write('''
+        #         choose your dog please
+        #         ''')
+        #     else:
+        #         # birth_d =datetime.datetime.strptime(ss.get_dogs_by_name(get_name)['birthday'],'%Y-%m-%d')
+        #         # st.write(ss.get_dogs_by_name(get_name)['birthday'])
+        #         # st.write(type(pd.DataFrame(ss.get_dogs_by_name(get_name))['birthday']))
+        #         st.write('''
+        #         your dog is **\'{}** years old
+        #         '''.format((ss.get_dogs_by_name(get_name))['birthday'])
+        #         )
         with row0_6:
+            st.image(mood, use_column_width =True, caption ='mood')
 
-        return 'nothing'
+        null0,row0,null1 =st.beta_columns((0.5,1,0.5))
+        # row0.write('====================================')
+        st.success('hearth data')
+        # =====================row 1===================
+        row1_1,null1_2,row1_3 =st.beta_columns((1,0.5,1))
+        with row1_1:
+            heart_check =st.checkbox('heart rate')
+            st.image('heart.png',use_column_width= 1)
+            st.write('heart rate is '+heart+' bit/min')
+        with row1_3:
+            heart_check =st.checkbox('respiration')
+            st.image('lung.png')
+            st.write('respiration rate is '+respiration+' times/min')
+
+        st.success('activity')
+        # ====================row 2====================
+        row2_2,row2_4,row2_6 =st.beta_columns((0.01,0.02,0.01))
+        with row2_2:
+            fig,ax =plt.subplot()
+            ax.hist(temp)
+            st.pyplot(fig)
+
+
+
+    present(
+        pic ='neko.jpeg',
+        mood ='neko.jpeg', 
+        heart ='90',
+        respiration ='16',
+        temp = 33,
+        pose =0,
+        step =23
+        )
+
 
 
 
