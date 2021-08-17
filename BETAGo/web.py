@@ -18,7 +18,7 @@ import  DogService as ss
 
 # D:\temp\betaGo>streamlit run web.py
 
-st.set_page_config('betaGo') # web name
+st.set_page_config(layout='wide', page_title='betaGo') # web name
 st.title("betaGo")
 # define the account
 
@@ -245,135 +245,132 @@ def user():
 
 
 
-
-
-    
-    
-
-
-
 def data():
     if switch !=1:
         return st.warning('no account')
 
-    st.dataframe(ss.get_all_dogs())
-    st.dataframe(ss.get_dogs_by_name('Taikong'))
 
-
-
-    st.write('here is data')
     ## -----------------------------------------
     ## daily part
 
     # ========= raw 0: user's info ================
     ## here you have to gain the image from your user about their dogs, also with the label
     ## if no, there is a default setting
-    def daily():
-        st.write('here is daily')
-        img_def =Image.open('neko.jpeg')
-        cap_def ='my dog'
-        st.image(img_def,cap_def)
-        them_color ='green'
+    st.write('here is daily')
+    img_def =Image.open('neko.jpeg')
+    cap_def ='my dog'
+    st.image(img_def,cap_def)
+    them_color ='green'
 
-        st.sidebar.subheader('time scale')
-        data_timescale =st.sidebar.radio('',('today','longterm'))
-        if data_timescale =='today':
-            # ========= raw 1:pet report ==================
+    st.sidebar.subheader('time scale')
+    data_timescale =st.sidebar.radio('',('today','longterm'))
+    # if data_timescale =='today':
 
+        # st.subheader('heart rate')
+        # heart_rate =pd.read_csv('heart_daily_'+pet_name+'.csv')
+        # st.dataframe(heart_rate)
 
+        # opt = np.array(heart_rate['time']).tolist()
 
-            # ========= raw 2:heart rate ==================
-            st.subheader('heart rate')
-            heart_rate =pd.read_csv('heart_daily_'+pet_name+'.csv')
-            st.dataframe(heart_rate)
+        # raw2_1,raw2_2,raw_2_25,raw2_4,raw2_3 =st.beta_columns((1,1,2,1,1))
+        # # with raw2_1:
+        # #     date_start = st.date_input('start date',datetime.date(2019, 7, 6))
+        # with raw2_2:
+    #         time_start = st.selectbox('start time', options=opt)
+    #     with raw_2_25:
+    #         st.image('lung.png')
+    #     # with raw2_3:
+    #     #     date_end = st.date_input('end date',datetime.date(2019, 7, 6))
+    #     with raw2_4:
+    #         time_end = st.selectbox('end time', options=opt)
+        
+        
+    #     raw2_6,raw2_7 =st.beta_columns((1,1))
+    #     with raw2_6:
+    #         st.write("starting:",time_start)
+    #     with raw2_7:
+    #         st.write("ending:",time_end)
 
-            opt = np.array(heart_rate['time']).tolist()
+    #     #setting index as date
+    #     # heart_rate['time'] = pd.to_datetime(heart_rate.time, unit='h',origin=pd.Timestamp(now))
+    #     # heart_rate.index = heart_rate['time']
 
-            raw2_1,raw2_2,raw_2_25,raw2_4,raw2_3 =st.beta_columns((1,1,2,1,1))
-            # with raw2_1:
-            #     date_start = st.date_input('start date',datetime.date(2019, 7, 6))
-            with raw2_2:
-                time_start = st.selectbox('start time', options=opt)
-            with raw_2_25:
-                st.image('lung.png')
-            # with raw2_3:
-            #     date_end = st.date_input('end date',datetime.date(2019, 7, 6))
-            with raw2_4:
-                time_end = st.selectbox('end time', options=opt)
+    #     heart_rate = heart_rate[time_start:time_end+1]
+    #     st.dataframe(heart_rate)
+
+    #     st.altair_chart(
+    #         alt.Chart(heart_rate).mark_area(
+    #             line ={'color':them_color},
+    #             color =alt.Gradient(
+    #                 gradient ='linear',
+    #                 stops =[alt.GradientStop(color ='white',offset =0.2), # color could be changed with theme
+    #                         alt.GradientStop(color =them_color, offset =1)],
+    #                         x1=1,x2=1,y1=1,y2=0
+    #             )
+    #             ).encode(
+    #         alt.X('time', type='quantitative',title='hour of day'),
+    #         alt.Y('data', type='quantitative', title='heart beat')),
             
-            
-            raw2_6,raw2_7 =st.beta_columns((1,1))
-            with raw2_6:
-                st.write("starting:",time_start)
-            with raw2_7:
-                st.write("ending:",time_end)
+    #     )
+    #     st.write('your dog is suuuuuuper great!')
 
-            #setting index as date
-            # heart_rate['time'] = pd.to_datetime(heart_rate.time, unit='h',origin=pd.Timestamp(now))
-            # heart_rate.index = heart_rate['time']
-    
-            heart_rate = heart_rate[time_start:time_end+1]
-            st.dataframe(heart_rate)
-
-            st.altair_chart(
-                alt.Chart(heart_rate).mark_area(
-                    line ={'color':them_color},
-                    color =alt.Gradient(
-                        gradient ='linear',
-                        stops =[alt.GradientStop(color ='white',offset =0.2), # color could be changed with theme
-                                alt.GradientStop(color =them_color, offset =1)],
-                                x1=1,x2=1,y1=1,y2=0
-                    )
-                    ).encode(
-                alt.X('time', type='quantitative',title='hour of day'),
-                alt.Y('data', type='quantitative', title='heart beat')),
-                
-            )
-            st.write('your dog is suuuuuuper great!')
-
-            # ========= raw 3:breath rate ==================
-            st.subheader('breath rate')
+    #     # ========= raw 3:breath rate ==================
+    #     st.subheader('breath rate')
 
 
-            # ========= raw 5: GPS =========================
-            st.subheader('GPS')
-            position =pd.read_csv('position'+'.csv')
-            # st.dataframe(position)
+    #     # ========= raw 5: GPS =========================
+    #     st.subheader('GPS')
+    #     position =pd.read_csv('position'+'.csv')
+    #     # st.dataframe(position)
 
-            import pydeck as pdk
+    #     import pydeck as pdk
 
-            st.map(position)
+    #     st.map(position)
 
-            # =========== raw 6: calorie =====================
-            st.subheader('calorie')
+    #     # =========== raw 6: calorie =====================
+    #     st.subheader('calorie')
 
 
-            # =========== raw 7: pose =======================
-            st.subheader('pose')
-            raw7_1,raw7_2,raw7_3,raw7_4 =st.beta_columns((1,1,1,1))
-            with raw7_1:
-                sitting_num =2
-                st.image(Image.open('sit.png'),f'sitting {sitting_num} times')
+    #     # =========== raw 7: pose =======================
+    #     st.subheader('pose')
+    #     raw7_1,raw7_2,raw7_3,raw7_4 =st.beta_columns((1,1,1,1))
+    #     with raw7_1:
+    #         sitting_num =2
+    #         st.image(Image.open('sit.png'),f'sitting {sitting_num} times')
 
-            with raw7_2:
-                sleeping_time =4
-                st.image(Image.open('sleep.png'),f'sitting {sleeping_time} hours')
+    #     with raw7_2:
+    #         sleeping_time =4
+    #         st.image(Image.open('sleep.png'),f'sitting {sleeping_time} hours')
 
-            with raw7_3:
-                standing_num =5
-                st.image(Image.open('stand.png'),f'sitting {standing_num} times')
+    #     with raw7_3:
+    #         standing_num =5
+    #         st.image(Image.open('stand.png'),f'sitting {standing_num} times')
 
-            with raw7_4:
-                down_num =3
-                st.image(Image.open('down.png'),f'sitting {down_num} times')
+    #     with raw7_4:
+    #         down_num =3
+    #         st.image(Image.open('down.png'),f'sitting {down_num} times')
 
-            # =========== raw 8: bark =======================
-            st.subheader('bark')
+    #     # =========== raw 8: bark =======================
+    #     st.subheader('bark')
 
-        # ------------- long term --------------
-        import plotly.figure_factory as ff
-        heart_long =pd.read_csv('heart_longterm_'+pet_name+'.csv')
-    daily()
+    # # ------------- long term --------------
+    # import plotly.figure_factory as ff
+    # heart_long =pd.read_csv('heart_longterm_'+pet_name+'.csv')
+
+    def present(pic,name_list):
+        null0_1,row0_2,null0_3,row0_4,null0_5,row0_6,null0_7 =st.beta_columns((0.1,4,0.2,4,0.2,4,0.1))
+        with row0_2:
+            head_photo =st.image(pic)
+        with row0_4:
+            get_name =st.checkbox()
+
+        with row0_6:
+
+        return 'nothing'
+
+
+
+
 
 # sign in
 
@@ -390,7 +387,7 @@ if sign_in =='sign in':
     acc =st.sidebar.text_input('Name')
     pw = st.sidebar.text_input('password')
     if len(acc) ==0:
-        st.warning('input you account here')
+        st.warning('input you account on the side bar')
         st.stop()
     if len(acc) != 0 and pw!='1':
         st.warning('Please input the right account or password!')
@@ -403,7 +400,7 @@ elif sign_in =='sign up':
     acc =st.sidebar.text_input('Name ')
     pw = st.sidebar.text_input('password ')
     if len(acc) ==0:
-        st.warning('creat you account here')
+        st.warning('creat you account on the side bar')
         st.stop()
     if len(acc) =='momoc':
         st.warning('This name already exists')

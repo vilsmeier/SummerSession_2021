@@ -87,6 +87,9 @@ def delete_dogs(name):
         delete from dogs where name=\'{}\';
     '''.format(name))
 
+def dog_photo(name):
+    
+
 
 if __name__ == '__main__':
     print(get_all_dogs())
