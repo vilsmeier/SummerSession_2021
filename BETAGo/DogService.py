@@ -1,10 +1,14 @@
-from logging import error
-import streamlit as st
 import datetime
+import os
+from io import BytesIO, StringIO
+from logging import error
+
 import pandas as pd
-from pandas import DataFrame as df
-from matplotlib import pyplot as plt
 import psycopg2
+import streamlit as st
+from matplotlib import pyplot as plt
+from pandas import DataFrame as df
+from PIL import Image
 
 # streamlit run /Users/apple/Documents/GitHub/SummerSession_2021/DogService.py
 
@@ -12,13 +16,7 @@ import psycopg2
 # Uses st.cache to only run once.
 # @st.cache(allow_output_mutation=True, hash_funcs={"_thread.RLock": lambda _: None})
 def init_connection():
-    return psycopg2.connect(
-        database = 'postgres',
-        user = 'postgres',
-        password = '360502',
-        host = 'localhost',
-        port = '5433'
-    )
+    return psycopg2.connect(**st.secrets["postgres"])
 
 conn = init_connection()
 
@@ -46,8 +44,6 @@ def get_all_dogs():
     birthday_list = []
     gender_list = []
     species_list = []
-    picture_list = []
-
 
     for r in dog_entries:
         id_list.append(r[0])
@@ -56,7 +52,6 @@ def get_all_dogs():
         birthday_list.append(r[3])
         gender_list.append('male' if r[4]==1 else 'female')
         species_list.append(r[5])
-        picture_list.append(r[6])
 
     dog_dict = {
         'id':id_list,
@@ -64,8 +59,7 @@ def get_all_dogs():
         'resign':resign_list,
         'birthday':birthday_list,
         'gender':gender_list,
-        'species':species_list,
-        'picture':picture_list
+        'species':species_list
     }
     return df(dog_dict).set_index(['id'])
 
@@ -73,7 +67,7 @@ def get_dogs_by_name(name):
     dogs = get_all_dogs()
     return dogs[dogs['name']==name]
 
-def resign_dogs(name,birthday,male,species,picture):
+def resign_dogs(name,birthday,male,species):
     x = '''
         insert into dogs (name, resign, birthday, male, species) VALUES 
             (\'{}\',now(),\'{}\',{},\'{}\');
@@ -87,14 +81,128 @@ def delete_dogs(name):
         delete from dogs where name=\'{}\';
     '''.format(name))
 
-def dog_photo(name):
-    
+def get_dog_id_by_name(name):
+    return get_dogs_by_name(name)['id']
+
+def add_temperature(dog_id,temperature):
+    execute_sql('''
+        insert into temperature (temperature, dog_id, time) VALUES
+        ({},\'{}\',now());
+    '''.format(temperature,dog_id))
+
+def get_temperature(dog_id):
+    q =  run_query('select temperature,time from temperature where dog_id={} order by time;'.format(dog_id))
+    temp_list = []
+    time_list = []
+    for e in q:
+        temp_list.append(e[0])
+        time_list.append(e[1])
+    return df({
+        'temperature':temp_list,
+        'time':time_list
+    })
+
+def add_gesture(dog_id,gesture):
+    execute_sql('''
+        insert into gesture (gesture, dog_id, time) VALUES
+        (\'{}\',\'{}\',now());
+    '''.format(gesture,dog_id))
+
+def get_gesture(dog_id):
+    q =  run_query('select gesture,time from gesture where dog_id={} order by time;'.format(dog_id))
+    ges_list = []
+    time_list = []
+    for e in q:
+        ges_list.append(e[0])
+        time_list.append(e[1])
+    return df({
+        'gesture':ges_list,
+        'time':time_list
+    })
+
+def add_weight(dog_id,weight):
+    execute_sql('''
+        insert into weight (weight, dog_id, time) VALUES
+        ({},\'{}\',now());
+    '''.format(weight,dog_id))
+
+def get_weight(dog_id):
+    q =  run_query('select weight,time from weight where dog_id={} order by time;'.format(dog_id))
+    wei_list = []
+    time_list = []
+    for e in q:
+        wei_list.append(e[0])
+        time_list.append(e[1])
+    return df({
+        'weight':wei_list,
+        'time':time_list
+    })
+
+def add_heart_rate(dog_id,heart_rate):
+    execute_sql('''
+        insert into heart_rate (heart_rate, dog_id, time) VALUES
+        ({},\'{}\',now());
+    '''.format(heart_rate,dog_id))
+
+def get_heart_rate(dog_id):
+    q =  run_query('select heart_rate,time from heart_rate where dog_id={} order by time;'.format(dog_id))
+    rat_list = []
+    time_list = []
+    for e in q:
+        rat_list.append(e[0])
+        time_list.append(e[1])
+    return df({
+        'heart_rate':rat_list,
+        'time':time_list
+    })
+
+def add_respire_rate(dog_id,respire_rate):
+    execute_sql('''
+        insert into respire_rate (respire_rate, dog_id, time) VALUES
+        ({},\'{}\',now());
+    '''.format(respire_rate,dog_id))
+
+def get_respire_rate(dog_id):
+    q =  run_query('select respire_rate,time from respire_rate where dog_id={} order by time;'.format(dog_id))
+    temp_list = []
+    time_list = []
+    for e in q:
+        temp_list.append(e[0])
+        time_list.append(e[1])
+    return df({
+        'respire_rate':temp_list,
+        'time':time_list
+    })
+
+def add_photo(dog_id,dir):
+    with open(dir,'rb') as f:
+        img_buffer = f.read()
+    binaryCoding = psycopg2.Binary(img_buffer)
+    execute_sql('''
+            insert into dog_photo(picture, dog_id, time) VALUES
+            (\'{}\',\'{}\',now());
+        ''',binaryCoding,dog_id)
+
+def get_photo(dog_id):
+    q =  run_query('select respire_rate,time from respire_rate where dog_id={} order by time;'.format(dog_id))
+    temp_list = []
+    time_list = []
+    for e in q:
+        temp_list.append(Image.open(BytesIO(e[0])))
+        time_list.append(e[1])
+    return df({
+        'respire_rate':temp_list,
+        'time':time_list
+    })
+
+
 
 
 if __name__ == '__main__':
-    print(get_all_dogs())
-    resign_dogs('Gammago','2017-4-9','false','Hashiqi')
-    print('execute!')
+    # print(get_all_dogs())
+    # resign_dogs('Gammago','2017-4-9','false','Hashiqi')
+    # print('execute!')
+    pass
 
 
 
