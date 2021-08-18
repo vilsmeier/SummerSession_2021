@@ -16,10 +16,13 @@ from streamlit.type_util import is_pandas_version_less_than
 import  DogService as ss
  
 
-# D:\temp\betaGo>streamlit run web.py
 
-st.set_page_config(layout='wide', page_title='betaGo') # web name
-st.title("betaGo")
+
+# D:\temp\betaGo>streamlit run web.py
+icon = Image.open("logo.png")
+st.set_page_config(layout='wide', page_title='betaGo',page_icon= icon) # web name
+st.sidebar.title("betaGo")
+st.sidebar.write('-------')
 # define the account
 
 user_name =''
@@ -62,49 +65,7 @@ def test():
         submitted4 =st.form_submit_button("Submit")
         if submitted4:
             st.write("submited")
-        
 
-    # if st.button('hi'):
-    #     st.write('hi')
-    # else:
-    #     st.write('fuck you!')
-
-    # ge =st.radio("piapiapia",('a','b','c'))
-
-    # if ge=='a':
-    #     st.write('gua')
-    # elif ge=='b':
-    #     st.write('pia')
-
-
-    # va =st.slider("sasasasa", 0.0,100.0,(25.0,75.0))
-    # st.write("it is",va)
-
-    # color = st.select_slider(
-    #     'Select a color of the rainbow',
-    # options=['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'])
-    # st.write('My favorite color is', color)
-
-    # number = st.number_input('Insert a number')
-    # st.write('The current number is ', number)
-
-    # txt = st.text_area('Text to analyze', '''
-    #     I feel very sad because there is no hope for my future
-    #     ''')
-    # st.write('Sentiment:', (txt))
-
-    # d = st.date_input(
-    #     "When's your birthday",
-    #     datetime.date(2019, 7, 6))
-    # st.write('Your birthday is:', d)
-
-    # t = st.time_input('Set an alarm for', datetime.time(8, 45))
-    # st.write('Alarm is set for', t)
-
-    # color = st.color_picker('Pick A Color', '#00f900')
-    # st.write('The current color is', color)
-
-pet_name ='gaga'
 age =9
 now ='2021-7-31'
 ini_lat = 22
@@ -175,17 +136,14 @@ def data():
     ## daily part
 
     # ========= raw 0: user's info ================
-    ## here you have to gain the image from your user about their dogs, also with the label
-    ## if no, there is a default setting
+    # here you have to gain the image from your user about their dogs, also with the label
+    # if no, there is a default setting
     # st.write('here is daily')
     # img_def =Image.open('neko.jpeg')
     # cap_def ='my dog'
     # st.image(img_def,cap_def)
-    # them_color ='green'
+    them_color ='green'
 
-    # st.sidebar.subheader('time scale')
-    # data_timescale =st.sidebar.radio('',('today','longterm'))
-    # if data_timescale =='today':
 
         # st.subheader('heart rate')
         # heart_rate =pd.read_csv('heart_daily_'+pet_name+'.csv')
@@ -278,7 +236,10 @@ def data():
     # import plotly.figure_factory as ff
     # heart_long =pd.read_csv('heart_longterm_'+pet_name+'.csv')
 
-    
+    @st.cache(allow_output_mutation =True)
+    def fetch_data(pet_name):
+        heart_rate =pd.read_csv('heart_daily_'+pet_name+'.csv')
+        return heart_rate
 
     def present(pic,mood,heart,respiration,temp,pose,step):
         # ====================row 0====================
@@ -288,7 +249,7 @@ def data():
         with row0_2:
             if len(get_name) !=0:
                 st.image(pic,use_column_width =True, caption ='my photo')
-
+        ## birthday
         # with row0_4:
         #     if len(get_name) ==0:
         #         st.write('''
@@ -301,43 +262,116 @@ def data():
         #         st.write('''
         #         your dog is **\'{}** years old
         #         '''.format((ss.get_dogs_by_name(get_name))['birthday'])
-        #         )
+        ##         )
         with row0_6:
             st.image(mood, use_column_width =True, caption ='mood')
 
         null0,row0,null1 =st.beta_columns((0.5,1,0.5))
         # row0.write('====================================')
+        st.write('-------')
         st.success('hearth data')
+        
         # =====================row 1===================
         row1_1,null1_2,row1_3 =st.beta_columns((1,0.5,1))
+        null_10_0,row11_1,row13_3,null14_4 =st.beta_columns((0.01,1,0.5,0.01))
+        # row11_1,row13_3 =st.beta_columns((1,0.5))
         with row1_1:
             heart_check =st.checkbox('heart rate')
-            st.image('heart.png',use_column_width= 1)
-            st.write('heart rate is '+heart+' bit/min')
+            st.image('heart.png',use_column_width= 1, caption='heart rate is '+heart+' bit/min')
+            if heart_check:
+                with row11_1:
+                    # st.dataframe(heart_rate)
+                    st.altair_chart(
+                        alt.Chart(fetch_data('gaga')).mark_area(# name shoule be get_name
+                            line ={'color':them_color},
+                            color =alt.Gradient(
+                                gradient ='linear',
+                                stops =[alt.GradientStop(color ='white',offset =0.2), # color could be changed with theme
+                                        alt.GradientStop(color =them_color, offset =1)],
+                                        x1=1,x2=1,y1=1,y2=0
+                            )
+                            ).encode(
+                        alt.X('time', type='quantitative',title='hour of day'),
+                        alt.Y('data', type='quantitative', title='heart beat')),
+                        
+                    )
+                with row13_3:
+                    st.write('''
+                    ### illustration:
+                    ''')
+                    st.write('''
+                     some description about dog's heart health condition, and a button to illustrate the criterion
+                    ''')
+                    st.write("""
+                    #### **Learn more**
+                    [!['link']('\\icon.png')](https://baidu.com)
+                    """)
+
         with row1_3:
             heart_check =st.checkbox('respiration')
-            st.image('lung.png')
-            st.write('respiration rate is '+respiration+' times/min')
+            st.image('lung.png', caption='respiration rate is '+respiration+' times/min')
 
+        st.write('-------')
         st.success('activity')
         # ====================row 2====================
-        row2_2,row2_4,row2_6 =st.beta_columns((0.01,0.02,0.01))
+        row2_2,row2_4,null2_5,row2_6,null2_7 =st.beta_columns((0.1,0.2,0.05,0.1,0.01))
         with row2_2:
-            fig,ax =plt.subplot()
-            ax.hist(temp)
-            st.pyplot(fig)
+            # fig,ax =plt.subplot()
+            temp_df =pd.DataFrame([temp],columns=['temp'])
+            st.bar_chart(temp_df,width= 10, use_container_width= True)
+            # st.pyplot(plt.bar(x ='temperature', height =temp))
+        with row2_4:
+            pose_sr =['down.png','sit.png','sleep.png','stand.png']
+            pose_intro =['downward','sitting','sleeping','standing']
+            st.write('my doy is \'{} now'.format(pose_intro[pose]))
+            st.image(pose_sr[pose],use_column_width= True)
+        with row2_6:
+            step_df =pd.DataFrame([step],columns=['step'])
+            st.bar_chart(step_df,width= 10, use_container_width= True)
+
+    def long_term(pic,gender,mood_index):
+        row0_2,row0_4,row0_6 =st.beta_columns((0.01,0.02,0.01))
+        with row0_4:
+            get_name =st.selectbox('NAME',options=ss.get_all_dogs()['name'])
+        with row0_2:
+            if len(get_name) !=0:
+                st.image(pic,use_column_width =True, caption ='my photo')     
+        with row0_6:
+            if gender ==1:
+                st.image('male.png', use_column_width =True)
+            if gender ==0:
+                st.image('female.png',use_column_width =True)
+
+        # ================row 1======================
+        st.write('''
+        * mood index
+        ''')
+        fig, ax = plt.subplots()
+        ax.hist(mood_index, bins=20)
+        st.pyplot(fig)
 
 
 
-    present(
-        pic ='neko.jpeg',
-        mood ='neko.jpeg', 
-        heart ='90',
-        respiration ='16',
-        temp = 33,
-        pose =0,
-        step =23
+    # sidebar
+    st.sidebar.subheader('time scale')
+    data_timescale =st.sidebar.radio('',('today','longterm'))
+    if data_timescale =='today':
+        present(
+            pic ='neko.jpeg',
+            mood ='neko.jpeg', 
+            heart ='90',
+            respiration ='16',
+            temp = 33,
+            pose =2,
+            step =23
+            )
+    if data_timescale =='longterm':
+        long_term(
+            pic ='neko.jpeg',
+            gender =1, # male
+            mood_index =np.random.normal(1, 1, size=100)
         )
+
 
 
 
@@ -355,7 +389,7 @@ sign_in =st.sidebar.radio('',('sign in','sign up'))
 #     sign_butt = True
 
 if sign_in =='sign in':
-    st.write('sign_in')
+    # st.write('sign_in')
     acc =st.sidebar.text_input('Name')
     pw = st.sidebar.text_input('password')
     if len(acc) ==0:
@@ -367,7 +401,7 @@ if sign_in =='sign in':
     else:
         user_name =acc
         switch =1 # open
-    st.success('welcome !')
+    # st.success('welcome !')
 elif sign_in =='sign up':
     acc =st.sidebar.text_input('Name ')
     pw = st.sidebar.text_input('password ')
@@ -382,9 +416,9 @@ elif sign_in =='sign up':
         user_name =acc
         user_pass =pw
         switch =1
-        
-    st.success('you have a new account now!')
 
+    # st.success('you have a new account now!')
+st.sidebar.write('-------')
 
 CEO =st.selectbox('',options=['home','data','diary'])
 if CEO =='diary':

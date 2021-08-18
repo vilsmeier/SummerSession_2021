@@ -2,7 +2,7 @@ import datetime
 import os
 from io import BytesIO, StringIO
 from logging import error
-
+import base64
 import pandas as pd
 import psycopg2
 import streamlit as st
@@ -15,8 +15,20 @@ from PIL import Image
 # Initialize connection.
 # Uses st.cache to only run once.
 # @st.cache(allow_output_mutation=True, hash_funcs={"_thread.RLock": lambda _: None})
+
+# for zjx
+# def init_connection():
+#     return psycopg2.connect(**st.secrets["postgres"])
+
+# for jxt
 def init_connection():
-    return psycopg2.connect(**st.secrets["postgres"])
+    return psycopg2.connect(
+        database = 'postgres',
+        user = 'postgres',
+        password = '360502',
+        host = 'localhost',
+        port = '5433'
+    )
 
 conn = init_connection()
 
@@ -195,6 +207,11 @@ def get_photo(dog_id):
         'time':time_list
     })
 
+def render_svg(svg):
+    """Renders the given svg string."""
+    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
+    html = r'<img src="data:image/svg+xml;base64,%s"/>' % b64
+    st.write(html, unsafe_allow_html=True)
 
 
 
