@@ -1,7 +1,8 @@
 from typing import ChainMap, Optional
 from altair.vegalite.v4.api import value
-from altair.vegalite.v4.schema.channels import Longitude
+from altair.vegalite.v4.schema.channels import Longitude, Opacity, YValue
 from altair.vegalite.v4.schema.core import Gradient, GradientStop
+from ipywidgets.widgets import widget
 from pandas.core.tools.datetimes import Scalar
 import streamlit as st 
 import numpy as np 
@@ -12,6 +13,7 @@ import altair as alt
 import matplotlib.pyplot as plt 
 from PIL import Image
 from streamlit.type_util import is_pandas_version_less_than
+import plotly.graph_objects as go
 
 import  DogService as ss
  
@@ -20,11 +22,19 @@ import  DogService as ss
 
 # D:\temp\betaGo>streamlit run web.py
 icon = Image.open("logo.png")
-st.set_page_config(layout='wide', page_title='betaGo',page_icon= icon) # web name
+st.set_page_config(layout='wide', page_title='betaGo',page_icon= icon,
+                    # primaryColor="#F63366"
+                     # backgroundColor="#FFFFFF"
+                    # secondaryBackgroundColor="#F0F2F6"
+                    # textColor="#262730"
+                    # font="sans serif"
+                    ) # web name
 st.sidebar.title("betaGo")
 st.sidebar.write('-------')
-# define the account
 
+
+
+# define the account
 user_name =''
 user_pass =''
 switch =0 # close
@@ -106,8 +116,11 @@ def user():
     if user_info:
         st.title(user_name)
         null0_1,row0_2,null0_2,row0_3,null0_3 =st.beta_columns((0.23,5,0.3,5,0.17))
-        row0_2.image(Image.open("neko.jpeg"), use_column_width =True, caption ='my photo')
         with row0_2:
+            dog_n =st.selectbox('  ',ss.get_all_dogs()['name'])
+            st.write(ss.get_dog_id_by_name(dog_n).values)
+            st.image(ss.get_photo(ss.get_dog_id_by_name(dog_n).values[0])[0], use_column_width =True, caption ='my photo')
+
             st.write('there should be a place to shift the photo that has been uploaded')
         with row0_3:
             st.write('''
@@ -117,130 +130,22 @@ def user():
             st.write('there should be some thing you want to show about yourself')
         with row0_3:
             st.dataframe(ss.get_all_dogs())
-            st.write(len(ss.get_all_dogs()))
-
-    def my_dog(name, pic, health):
-        null1_1,row1_2,null1_3,row1_4,null1_5,row1_6,null1_7 =st.beta_columns((0.1,4,0.2,4,0.2,5,0.1))
-        with row1_2:
-            st.write(name)
-        # with row1_4:
+            st.write('you have :'+len(ss.get_all_dogs())+'dogs')
+        
 
 
 
 def data():
     if switch !=1:
         return st.warning('no account')
-
-
-    ## -----------------------------------------
-    ## daily part
-
-    # ========= raw 0: user's info ================
-    # here you have to gain the image from your user about their dogs, also with the label
-    # if no, there is a default setting
-    # st.write('here is daily')
-    # img_def =Image.open('neko.jpeg')
-    # cap_def ='my dog'
-    # st.image(img_def,cap_def)
     them_color ='green'
-
-
-        # st.subheader('heart rate')
-        # heart_rate =pd.read_csv('heart_daily_'+pet_name+'.csv')
-        # st.dataframe(heart_rate)
-
-        # opt = np.array(heart_rate['time']).tolist()
-
-        # raw2_1,raw2_2,raw_2_25,raw2_4,raw2_3 =st.beta_columns((1,1,2,1,1))
-        # # with raw2_1:
-        # #     date_start = st.date_input('start date',datetime.date(2019, 7, 6))
-        # with raw2_2:
-    #         time_start = st.selectbox('start time', options=opt)
-    #     with raw_2_25:
-    #         st.image('lung.png')
-    #     # with raw2_3:
-    #     #     date_end = st.date_input('end date',datetime.date(2019, 7, 6))
-    #     with raw2_4:
-    #         time_end = st.selectbox('end time', options=opt)
-        
-        
-    #     raw2_6,raw2_7 =st.beta_columns((1,1))
-    #     with raw2_6:
-    #         st.write("starting:",time_start)
-    #     with raw2_7:
-    #         st.write("ending:",time_end)
-
-    #     #setting index as date
-    #     # heart_rate['time'] = pd.to_datetime(heart_rate.time, unit='h',origin=pd.Timestamp(now))
-    #     # heart_rate.index = heart_rate['time']
-
-    #     heart_rate = heart_rate[time_start:time_end+1]
-    #     st.dataframe(heart_rate)
-
-    #     st.altair_chart(
-    #         alt.Chart(heart_rate).mark_area(
-    #             line ={'color':them_color},
-    #             color =alt.Gradient(
-    #                 gradient ='linear',
-    #                 stops =[alt.GradientStop(color ='white',offset =0.2), # color could be changed with theme
-    #                         alt.GradientStop(color =them_color, offset =1)],
-    #                         x1=1,x2=1,y1=1,y2=0
-    #             )
-    #             ).encode(
-    #         alt.X('time', type='quantitative',title='hour of day'),
-    #         alt.Y('data', type='quantitative', title='heart beat')),
-            
-    #     )
-    #     st.write('your dog is suuuuuuper great!')
-
-    #     # ========= raw 3:breath rate ==================
-    #     st.subheader('breath rate')
-
-
-    #     # ========= raw 5: GPS =========================
-    #     st.subheader('GPS')
-    #     position =pd.read_csv('position'+'.csv')
-    #     # st.dataframe(position)
-
-    #     import pydeck as pdk
-
-    #     st.map(position)
-
-    #     # =========== raw 6: calorie =====================
-    #     st.subheader('calorie')
-
-
-    #     # =========== raw 7: pose =======================
-    #     st.subheader('pose')
-    #     raw7_1,raw7_2,raw7_3,raw7_4 =st.beta_columns((1,1,1,1))
-    #     with raw7_1:
-    #         sitting_num =2
-    #         st.image(Image.open('sit.png'),f'sitting {sitting_num} times')
-
-    #     with raw7_2:
-    #         sleeping_time =4
-    #         st.image(Image.open('sleep.png'),f'sitting {sleeping_time} hours')
-
-    #     with raw7_3:
-    #         standing_num =5
-    #         st.image(Image.open('stand.png'),f'sitting {standing_num} times')
-
-    #     with raw7_4:
-    #         down_num =3
-    #         st.image(Image.open('down.png'),f'sitting {down_num} times')
-
-    #     # =========== raw 8: bark =======================
-    #     st.subheader('bark')
-
-    # # ------------- long term --------------
-    # import plotly.figure_factory as ff
-    # heart_long =pd.read_csv('heart_longterm_'+pet_name+'.csv')
 
     @st.cache(allow_output_mutation =True)
     def fetch_data(pet_name):
         heart_rate =pd.read_csv('heart_daily_'+pet_name+'.csv')
         return heart_rate
 
+    # @st.cache(ttl=300)
     def present(pic,mood,heart,respiration,temp,pose,step):
         # ====================row 0====================
         row0_2,row0_4,row0_6 =st.beta_columns((0.01,0.02,0.01))
@@ -273,28 +178,33 @@ def data():
         
         # =====================row 1===================
         row1_1,null1_2,row1_3 =st.beta_columns((1,0.5,1))
-        null_10_0,row11_1,row13_3,null14_4 =st.beta_columns((0.01,1,0.5,0.01))
+        null_10_0,row11_1,row13_3,null14_4 =st.beta_columns((0.1,2.5,1,0.1))
+        null_30_0,row31_1,row33_3,null34_4 =st.beta_columns((0.1,2.5,1,0.1))
         # row11_1,row13_3 =st.beta_columns((1,0.5))
         with row1_1:
             heart_check =st.checkbox('heart rate')
-            st.image('heart.png',use_column_width= 1, caption='heart rate is '+heart+' bit/min')
+            st.image('heart.png', caption='heart rate is '+heart+' beat/min',width =100)
             if heart_check:
                 with row11_1:
-                    # st.dataframe(heart_rate)
+                    # df = fetch_data('gaga')
+                    df_sh = ss.get_heart_rate(2)
+                    # st.dataframe(df_s)
                     st.altair_chart(
-                        alt.Chart(fetch_data('gaga')).mark_area(# name shoule be get_name
-                            line ={'color':them_color},
-                            color =alt.Gradient(
-                                gradient ='linear',
-                                stops =[alt.GradientStop(color ='white',offset =0.2), # color could be changed with theme
-                                        alt.GradientStop(color =them_color, offset =1)],
-                                        x1=1,x2=1,y1=1,y2=0
-                            )
-                            ).encode(
-                        alt.X('time', type='quantitative',title='hour of day'),
-                        alt.Y('data', type='quantitative', title='heart beat')),
-                        
-                    )
+                            alt.Chart(df_sh,
+                                height =200
+                                ).mark_area(
+                                line ={'color':'#C84B05'},
+                                color =alt.Gradient(
+                                    gradient ='linear',
+                                    stops =[alt.GradientStop(color ='white',offset =0.2), # color could be changed with theme
+                                            alt.GradientStop(color ='#C84B05', offset =1)],
+                                            x1=1,x2=1,y1=1,y2=0
+                                )
+                                ).encode(
+                            alt.X('time', type='quantitative',title='hour of day'),
+                            alt.Y('heart_rate', type='quantitative', title='heart beat',scale =alt.Scale(domain=[min(df_sh['heart_rate'])-1,max(df_sh['heart_rate'])+1]))),
+                            use_container_width= True 
+                        )
                 with row13_3:
                     st.write('''
                     ### illustration:
@@ -302,14 +212,44 @@ def data():
                     st.write('''
                      some description about dog's heart health condition, and a button to illustrate the criterion
                     ''')
-                    st.write("""
-                    #### **Learn more**
-                    [!['link']('\\icon.png')](https://baidu.com)
-                    """)
+                    st.write(
+                            """
+                            ### [🐕](https://sustech.edu.cn)
+                            """) 
 
         with row1_3:
-            heart_check =st.checkbox('respiration')
-            st.image('lung.png', caption='respiration rate is '+respiration+' times/min')
+            breath_check =st.checkbox('respiration')
+            st.image('lung.png', caption='respiration rate is '+respiration+' times/min',width =100)
+            if breath_check:
+                with row31_1:
+                    df_sb = fetch_data('gaga')
+                    st.altair_chart(
+                            alt.Chart(df_sb,
+                            height =200
+                            # ,width = 100.0
+                            ).mark_area(
+                                line ={'color':'#C84B05'},
+                                color =alt.Gradient(
+                                    gradient ='linear',
+                                    stops =[alt.GradientStop(color ='white',offset =0.2), # color could be changed with theme
+                                            alt.GradientStop(color ='#C84B05', offset =1)],
+                                            x1=1,x2=1,y1=1,y2=0
+                                )
+                                ).encode(
+                            alt.X('time', type='quantitative',title='hour of day'),
+                            alt.Y('data', type='quantitative', title='breath beat',scale =alt.Scale(domain=[min(df_sb['data'])-1,max(df_sb['data'])+1]))),
+                            use_container_width= True
+                            
+                        )
+                with row33_3:
+                    st.write('''
+                    ### illustration:
+                    ''')
+                    st.write('''
+                     some description about dog's breath health condition, and a button to illustrate the criterion
+                    ''')
+                    st.write("""
+                    ### [🐕](https://sustech.edu.cn) """)
 
         st.write('-------')
         st.success('activity')
@@ -325,16 +265,20 @@ def data():
             pose_intro =['downward','sitting','sleeping','standing']
             st.write('my doy is \'{} now'.format(pose_intro[pose]))
             st.image(pose_sr[pose],use_column_width= True)
+            st.write('''
+                    ###### [learn more about dog's pose](https://www.baidu.com)
+            ''')
         with row2_6:
             step_df =pd.DataFrame([step],columns=['step'])
             st.bar_chart(step_df,width= 10, use_container_width= True)
 
-    def long_term(pic,gender,mood_index):
+
+    def long_term(pic,gender,mood_index,heart_rate,breath_rate,pose):
         row0_2,row0_4,row0_6 =st.beta_columns((0.01,0.02,0.01))
         with row0_4:
-            get_name =st.selectbox('NAME',options=ss.get_all_dogs()['name'])
+            get_name2 =st.selectbox('NAME',options=ss.get_all_dogs()['name'])
         with row0_2:
-            if len(get_name) !=0:
+            if len(get_name2) !=0:
                 st.image(pic,use_column_width =True, caption ='my photo')     
         with row0_6:
             if gender ==1:
@@ -343,15 +287,110 @@ def data():
                 st.image('female.png',use_column_width =True)
 
         # ================row 1======================
+        st.write('-------')
         st.write('''
-        * mood index
+        * ## **mood index**
         ''')
         fig, ax = plt.subplots()
         ax.hist(mood_index, bins=20)
         st.pyplot(fig)
+        # ================row 2======================
+        st.write('----------')
+        st.write('''* ## **Health data**''')
+        select_heart_breath =st.selectbox(' ',options=['heart rate','respiration'])
+        if select_heart_breath =='heart rate':
+            df_l =heart_rate
+            fig1 =go.Figure()
+            fig1.add_trace(go.Scatter(x =df_l['date'], y =df_l['data'],
+                            name ='Heart rate', opacity =0.7,
+                            line =dict(color =them_color,width =2)))
+            fig1.add_vrect(x0 =str(df_l['date'][0]),x1 =str(df_l['date'][len(df_l['date'])-1]),
+                            line_width =0, fillcolor =them_color, opacity =0.2, annotation_text =get_name2,
+                            annotation_position ='inside top left',
+                            annotation =dict(font_size =14,font_family ="Comic Sans MS"))
+            fig1.update_xaxes(
+                rangeselector_activecolor="#EBD2B9",
+                rangeslider_visible=True
+            )
+            fig1.update_layout(
+                xaxis_title ='date',
+                yaxis_title ='heart rate',
+                height =600
+            )
+            st.plotly_chart(fig1)
+        elif select_heart_breath =='respiration':
+            df_lb =breath_rate
+            fig2 =go.Figure()
+            fig2.add_trace(go.Scatter(x =df_lb['date'], y =df_lb['data'],
+                            name ='respiration rate', opacity =0.7,
+                            line =dict(color =them_color,width =2)))
+            fig2.add_vrect(x0 =str(df_lb['date'][0]),x1 =str(df_lb['date'][len(df_lb['date'])-1]),
+                            line_width =0, fillcolor =them_color, opacity =0.2, annotation_text =get_name2,
+                            annotation_position ='inside top left',
+                            annotation =dict(font_size =14,font_family ="Comic Sans MS"))
+            fig2.update_xaxes(
+                rangeselector_activecolor="#EBD2B9",
+                rangeslider_visible=True
+            )
+            fig2.update_layout(
+                xaxis_title ='date',
+                yaxis_title ='breath rate',
+                height =600
+            )
+            st.plotly_chart(fig2)  
+        # ===============row 3===============
+        st.write('-----------')
+        st.write('''
+                * ## **Activity**
+                ''')
+        df_lb =pd.read_csv('heart_longterm_gaga.csv')
+        fig3 =go.Figure()
+        fig3.add_trace(go.Scatter(x =df_lb['date'], y =df_lb['data'],
+                        name ='respiration rate', opacity =0.7,
+                        line =dict(color =them_color,width =2)))
+        fig3.add_vrect(x0 =str(df_lb['date'][0]),x1 =str(df_lb['date'][len(df_lb['date'])-1]),
+                        line_width =0, fillcolor =them_color, opacity =0.2, annotation_text =get_name2,
+                        annotation_position ='inside top left',
+                        annotation =dict(font_size =14,font_family ="Comic Sans MS"))
+        fig3.update_xaxes(
+            rangeselector_activecolor="#EBD2B9",
+            rangeslider_visible=True
+        )
+        fig3.update_layout(
+            xaxis_title ='date',
+            yaxis_title ='breath rate',
+            height =600
+        )
+        st.plotly_chart(fig3) 
 
+        # ================row 4==================
+        st.write('--------------')
+        st.write('''
+                * ## **pose**
+                ''')
 
+        row4_1,row4_2 =st.beta_columns((1,1))
+        with row4_1:
+            labels = ['down', 'lay', 'stand', 'sit', 'others']
+            sizes = [15, 30, 40, 10,5]
+            explode = [0, 0, 0, 0, 0]  # only "explode" the 2nd slice (i.e. 'Hogs')
+            explode[sizes.index(max(sizes))] =0.1
 
+            fig4, ax4 = plt.subplots()
+            ax4.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+                    shadow=True, startangle=90)
+            ax4.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+            st.pyplot(fig4)
+        with row4_2:
+            st.write('''
+                    your dog likes
+                    ''')
+            st.write('''
+                    # {}
+                    '''.format(labels[sizes.index(max(sizes))]))
+            st.write('most')
+            
     # sidebar
     st.sidebar.subheader('time scale')
     data_timescale =st.sidebar.radio('',('today','longterm'))
@@ -368,13 +407,12 @@ def data():
     if data_timescale =='longterm':
         long_term(
             pic ='neko.jpeg',
-            gender =1, # male
-            mood_index =np.random.normal(1, 1, size=100)
+            gender =0, # male
+            mood_index =np.random.normal(1, 1, size=100),
+            heart_rate =pd.read_csv('heart_longterm_gaga.csv'),
+            breath_rate =pd.read_csv('heart_longterm_gaga.csv'),
+            pose =pd.DataFrame(data ={'labels': ['down', 'lay', 'stand', 'sit', 'others'],'sizes': [15, 30, 40, 10,5]})
         )
-
-
-
-
 
 
 
@@ -427,5 +465,8 @@ elif CEO =='home':
     user()
 elif CEO =='data':
     data()
+
+
+
 
 

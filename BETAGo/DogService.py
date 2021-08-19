@@ -79,12 +79,17 @@ def get_dogs_by_name(name):
     dogs = get_all_dogs()
     return dogs[dogs['name']==name]
 
-def resign_dogs(name,birthday,male,species):
+def resign_dogs(name,birthday,male,species,picture=None):
     x = '''
         insert into dogs (name, resign, birthday, male, species) VALUES 
             (\'{}\',now(),\'{}\',{},\'{}\');
         '''.format(name,birthday,male,species)
     execute_sql(x)
+    id = get_dog_id_by_name(
+        name
+    )
+    if picture is not None:
+        add_photo(id,picture)
     print(x)
     print('done!')
 
@@ -94,7 +99,7 @@ def delete_dogs(name):
     '''.format(name))
 
 def get_dog_id_by_name(name):
-    return get_dogs_by_name(name)['id']
+    return get_dogs_by_name(name).index
 
 def add_temperature(dog_id,temperature):
     execute_sql('''
@@ -186,24 +191,24 @@ def get_respire_rate(dog_id):
         'time':time_list
     })
 
-def add_photo(dog_id,dir):
-    with open(dir,'rb') as f:
-        img_buffer = f.read()
+def add_photo(dog_id,f):
+    # with open(dir,'rb') as f:
+    img_buffer = f.read()
     binaryCoding = psycopg2.Binary(img_buffer)
     execute_sql('''
             insert into dog_photo(picture, dog_id, time) VALUES
             (\'{}\',\'{}\',now());
-        ''',binaryCoding,dog_id)
+        '''.format(binaryCoding,dog_id))
 
 def get_photo(dog_id):
-    q =  run_query('select respire_rate,time from respire_rate where dog_id={} order by time;'.format(dog_id))
+    q =  run_query('select picture,time from dog_photo where dog_id={} order by time;'.format(dog_id))
     temp_list = []
     time_list = []
     for e in q:
         temp_list.append(Image.open(BytesIO(e[0])))
         time_list.append(e[1])
     return df({
-        'respire_rate':temp_list,
+        'photo':temp_list,
         'time':time_list
     })
 
